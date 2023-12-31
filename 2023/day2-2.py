@@ -15,32 +15,26 @@ test_input = ["Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green",
 
 
 # What to do
-# read game and split into sets
-# Count maximum number of each colour per set
-# If max is less than elf condition we can add id to sum
+# fewest number of cubes of each colour that could be in the bag
 
 
 # Call function to see if we add the id
 def main(input_games):
-    sum = 0
-    for id, game in enumerate(input_games):
-        if check_valid_game(game, 12, 13, 14):
-            sum += id + 1
-    return sum
+    powers = 0
+    for input_game in input_games:
+        powers += find_game_power(input_game)
+    return powers
 
 
-# Need to check each against condition, work out how to use dictionaries ffs
-def check_valid_game(input_game,
-                     red_condition,
-                     green_condition,
-                     blue_condition):
+def find_game_power(input_game):
     max_colours = get_max_colours(input_game)
-    if red_condition >= max_colours.get('red') and green_condition >= max_colours.get('green') and blue_condition >= max_colours.get('blue'):
-        return True
-    else:
-        return False
+    power = 1
+    for value in max_colours.values():
+        power *= value
+    return power
 
 
+# Still need this!
 def get_max_colours(input_string):
     max_colours = {'red': 0, 'green': 0, 'blue': 0}
     game = input_string[8:]
