@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 
 def read_input_to_list(file):
@@ -26,7 +27,6 @@ def main(input_games):
     for id, game in enumerate(input_games):
         if check_valid_game(game, 12, 13, 14):
             sum += id + 1
-            print(id + 1)
     return sum
 
 
@@ -36,7 +36,7 @@ def check_valid_game(input_game,
                      green_condition,
                      blue_condition):
     max_colours = get_max_colours(input_game)
-    if red_condition >= max_colours.get('red') and green_condition >= max_colours.get('green') and blue_condition > max_colours.get('blue'):
+    if red_condition >= max_colours.get('red') and green_condition >= max_colours.get('green') and blue_condition >= max_colours.get('blue'):
         return True
     else:
         return False
@@ -57,14 +57,10 @@ def get_max_colours(input_string):
 
 
 if __name__ == "__main__":
-    # print("Doing test example")
-    # print(main(test_input))
+    print("Doing test example")
+    print(main(test_input))
 
     input_df = read_input_to_list("./input_data/day2-1.csv")
-    print("RED = 12, GREEN = 13, BLUE = 14")
-    for i in range(10):
-        print(input_df[i])
-        print(check_valid_game(input_df[i], 12, 13, 14))
 
     print("Main Problem")
     print(main(input_df))
