@@ -8,6 +8,7 @@
 # Find size of number
 # Check area around number to see if it should be added
 
+
 test_input = ["467..114..",
               "...*......",
               "..35..633.",
@@ -35,13 +36,10 @@ def read_schematic_file(file_path):
     return schematic
 
 
-# Example usage
-file_path = './input_data/3.txt'
-schematic_input = read_schematic_file(file_path)
-
-
 def main(input):
     sum = 0
+    j = 0
+    line = input[0]
     number = ""
     for j, line in enumerate(input):
         for i, character in enumerate(line):
@@ -49,32 +47,50 @@ def main(input):
                 number = number + character
             else:
                 if number != "":
-                    multi_factor = check_symbols(input,
-                                                 j,
-                                                 i,
-                                                 len(number))
+                    multi_factor = check_symbols(input, j, i, len(number))
                     sum += int(number) * multi_factor
+                    print(number, multi_factor)
                     number = ""
+    if number:
+        multi_factor = check_symbols(input, j, len(line), len(number))
+        sum += int(number) * multi_factor
     return sum
 
 
-# I believe once I solve what ranges to search through everything should work
 def check_symbols(input, line, character, number_length):
     for offset in range(number_length):
+        print(offset)
         current_char_col = character - number_length + offset
         for direction_row, direction_col in directions:
             row, col = line + direction_row, current_char_col + direction_col
             if 0 <= row < len(input) and 0 <= col < len(input[row]):
+                print(row, col)
                 potential_symbol = input[row][col]
-                if potential_symbol.isprintable() and not potential_symbol.isalnum() and potential_symbol != '.':
+                if potential_symbol != '.' and not potential_symbol.isalnum():
+                    allsymbols.append(potential_symbol)
                     return 1
     return 0
 
 
-if __name__ == "__main__":
-    print("Test Results:")
-    print(main(test_input))
+allsymbols = []
 
-    print("Main Results:")
-    result = main(schematic_input)
-    print("Sum of part numbers:", result)
+
+if __name__ == "__main__":
+    # print("Test Results:")
+    # print(main(test_input))
+
+    # file_path = './input_data/3.txt'
+    # input = read_schematic_file(file_path)
+    # print("Main Results:")
+    # result = main(input[13])
+    # print(input[13])
+    # print("Sum of part numbers:", result)
+    test = check_symbols("852*68...", 0, 4, 2)
+    print(test)
+
+
+# print(set(allsymbols))
+# print(len(allsymbols))
+# {'*', '$', '%', '&', '=', '@', '/', '+', '-', '#'}
+
+# Current answer 1180324
