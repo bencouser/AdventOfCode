@@ -26,37 +26,82 @@ test_input = ["Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53",
               "Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36",
               "Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"]
 
+# I need something like
+# cards = [{id: 1,
+#           copy_cards: [2, 3, 4, 5, 6]}
+#          {id: 2,
+#           ....
+
+# if len(copycards) = 0
+# then we add 1
+
+# each len = 0 card can be combined to make the others
+
 
 def main(input):
-    total_cards = len(input) - 1
-    while len(input) > 0:
-        for card in input:
-            print("Remaining Cards", len(input), "   Total Cards", total_cards)
-            card_name, card_winning_numbers, card_numbers = split_numbers_tolist(
-                card)
-            matching_numbers_count = count_matching_numbers(
-                card_winning_numbers, card_numbers)
-            total_cards += matching_numbers_count
-            if matching_numbers_count > 0:
-                copy_cards = get_copy_cards(
-                    input, card_name, matching_numbers_count)
-                input.extend(copy_cards)
-                input.remove(card)
-            else:
-                input.remove(card)
-    return total_cards
+    total_count = len(input)
+    # cards = [{'id': 1, 'copy_cards': []}, ...]
+    cards = []
+    for card in input:
+        # Get Card Name
+        card_name, card_winning_numbers, card_numbers = split_numbers_tolist(
+            card)
+        # print(card_name)
+        # Get number of winning number
+        number_of_copies = count_matching_numbers(
+            card_winning_numbers, card_numbers)
+        # print(number_of_copies)
+        # Get copy cards
+        copy_cards = get_copy_cards(card_name, number_of_copies, input)
+        cards.append({'id': card_name, 'copy_cards': copy_cards})
+
+    total_count = count_total_cards(cards)
+    print(cards)
+
+    return total_count
 
 
-def get_copy_cards(input, card_name, matching_numbers_count):
+def count_total_cards(card_list):
+    card_dict = {card['id']: card['copy_cards'] for card in card_list}
+    total_count = 0
+    already_counted = set()
+
+    for card_id in card_dict:
+        total_count += count_copies(card_id, card_dict, already_counted)
+
+    return total_count
+
+
+def count_copies(card_id, card_dict, already_counted):
+    if card_id not in already_counted:
+        already_counted.add(card_id)
+        count = 1
+    else:
+        count = 0
+
+    for copy_id in card_dict[card_id]:
+        count += count_copies(copy_id, card_dict, already_counted)
+
+    return count
+
+
+# create function get copy cards
+# return list of card_names that are copies
+def get_copy_cards(card_name, number_of_copies,  input):
     copy_cards = []
-    for i in range(matching_numbers_count-1):
-        copy_cards.append(input[card_name - 1 + i])
+    for copy in range(number_of_copies):
+        copy_card = input[card_name + copy]
+        copy_index = get_card_name(copy_card)
+        copy_cards.append(copy_index)
     return copy_cards
 
 
-def remove_spaces_from_string(string):
-    string = string.replace(" ", "")
-    return string
+def get_card_name(card):
+    card = card.split(":")
+    card_name = card[0].split(" ")
+    card_name = card_name[-1]
+    card_name = int(card_name)
+    return card_name
 
 
 def split_numbers_tolist(card):
@@ -92,7 +137,7 @@ if __name__ == "__main__":
     test_result = main(test_input)
     print("Test result:", test_result)
 
-    input = read_input("./input_data/4.txt")
-
-    main_result = main(input)
-    print("Main result:", main_result)
+    # input = read_input("./input_data/4.txt")
+    #
+    # main_result = main(input)
+    # print("Main result:", main_result)
